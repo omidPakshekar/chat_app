@@ -9,6 +9,9 @@ from rest_framework import generics, status, views, permissions, viewsets
 
 from chat.models import Chat, Contact
 from .serializers import *
+from asgiref.sync import async_to_sync
+
+from channels.layers import get_channel_layer
 
 
 User = get_user_model()
@@ -45,8 +48,20 @@ class ChatViewSet(viewsets.ModelViewSet):
         if contact_.count() == 0:
             contact = serializer.save(owner=self.request.user)
             chat_ = Chat.objects.create(participants=contact)
-            print('unique_code=', chat_.id, chat_.unique_code)
+            print('***unique_code=', chat_.id, chat_.unique_code)
+            channel_layer = get_channel_layer()
+            user = request.user.id
+
+            async_to_sync(channel_layer.group_send)(
+                f'notification_{request.user.id}',
+                {
+                    'type': 'fetch_one_room',
+                    'chat_id': chat_.id
+                }
+            )
             return Response(data = {'chat_id': chat_.unique_code}, status=status.HTTP_201_CREATED)
+        
+
         return Response(data = {'chat_id': contact_[0].chats.all()[0].unique_code}, status=status.HTTP_200_OK)
         
 

@@ -7,7 +7,7 @@ from dj_rest_auth.views import LoginView as dj_Login
 
 from accounts.models import CustomUser
 
-from .serializers import CustomJWTSerializer, SearchUsernameSerializer, UserInlineSerializer
+from .serializers import *
 
 
 class CustomUserLogin(dj_Login):
@@ -21,3 +21,8 @@ class SearchUsername(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         return Response(UserInlineSerializer(instance=self.queryset.filter(username__contains=request.data['username']), many=True).data)
 
+
+class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+    queryset = CustomUser.objects.all()

@@ -17,30 +17,33 @@ services:
       - "5432"
     networks:
       - back
-  nginx:
-    build: ./nginx
-    image: "nginx:latest"
-    # volumes:
-    #   - /static:/static
-    networks:
-      - front
-      - back
-    ports:
-      - "8001:80"
-    depends_on:
-      - daphne
-      - web
-    links:
-      - daphne
-      - web
+  # nginx:
+  #   build: ./nginx
+  #   image: "nginx:latest"
+  #   # volumes:
+  #   #   - /static:/static
+  #   networks:
+  #     - front
+  #     - back
+  #   ports:
+  #     - "8001:80"
+  #   depends_on:
+  #     - frontend
+  #     - daphne
+  #     - web
+  #   links:
+  #     - frontend
+  #     - daphne
+  #     - web
+  
     # volumes:
     #   - type: 'bind'
     #     source: './media'
     #     target: '/django_jobfinder_socialnetwrok/media'
       
-    #   - type: 'bind'
-    #     source: './static'
-    #     target: '/django_jobfinder_socialnetwrok/static'
+      # - type: 'bind'
+      #   source: './static'
+      #   target: '/django_jobfinder_socialnetwrok/static'
   
   redis:
     image: redis:alpine
@@ -89,6 +92,7 @@ services:
     links:
       - redis
       - db
+   
   web:
     build: ./app
     command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
@@ -108,6 +112,28 @@ services:
     links:
       - redis
       - db
+  
+  frontend:
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+    build: 
+      context: ./Center
+    volumes:
+      - /Center/node_modules
+      - /Center/dist
+      - ./Center:/Center
+    ports:
+      - "80:80"
+    expose:
+      - "80"
+    networks:
+      - back
+      - front
+
+    
+    
+
   # Celery
   # celery:
   #   restart: always
@@ -129,6 +155,7 @@ services:
 
 volumes:
   static:
+  react_build:
 
 networks:
   front:

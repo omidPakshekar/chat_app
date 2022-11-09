@@ -28,7 +28,7 @@ class UserMessage(models.Model):
 class Message(models.Model):
     sender         = models.ForeignKey(CustomUser, related_name='messages_sender', on_delete=models.CASCADE)
     reciever       = models.ForeignKey(UserMessage, related_name='messages_recievers', on_delete=models.CASCADE)
-    parent_message = models.OneToOneField('Message', related_name='child', null=True, on_delete=models.SET_NULL, blank=True)
+    parent_message = models.ForeignKey('Message', related_name='child', null=True, on_delete=models.SET_NULL, blank=True)
     timestamp      = models.DateTimeField(auto_now_add=True)
     content_type   = models.ForeignKey(ContentType,
                                 limit_choices_to = {
