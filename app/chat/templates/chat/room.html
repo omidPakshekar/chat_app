@@ -124,7 +124,7 @@
        //var chatSocket = new ReconnectingWebSocket(
        //'ws://' + window.location.host +
         //'/ws/chat/' + roomName + '/');
-        var chat_id ='aAGfUCnyKouTbEBbAeXZJUdDwWNiWNGlBNF';
+        var chat_id ='rcdfvWFWxAYiFyPyrtgqmQUYgAxOVNKrzvz';
         var chatSocket = new WebSocket(
         'ws://' + window.location.host +
         '/ws/chat2/' + chat_id + '/' +'test2/');
@@ -184,7 +184,7 @@
 
       } else{
         var pTag = document.createElement('p');
-        pTag.textContent = author +' = ' + data.content;
+        pTag.textContent = author +' = ' + data.content + " time="+ data['timestamp'] + " date= "+ data['date'];
         console.log(pTag)
      // imgTag.src = 'http://emilcarlsson.se/assets/mikeross.png';
       }

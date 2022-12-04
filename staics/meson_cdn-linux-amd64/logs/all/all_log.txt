@@ -1,0 +1,36 @@
+2022-12-01 10:22:02 [INFO] Node starting, version:  v3.1.18
+2022-12-01 10:22:03 [INFO] Init node id...
+2022-12-01 10:22:03 [INFO] Node id not exist, gen new node id...
+2022-12-01 10:22:03 [INFO] Init node certificate...
+2022-12-01 10:22:04 [INFO] Checking cdn cache folder...
+2022-12-01 10:22:35 [INFO] https server started on port :443
+2022-12-01 10:22:35 [INFO] waiting for heart beat callback...
+2022-12-01 10:22:36 [INFO] heart beat callback received
+2022-12-01 13:23:15 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:11 SLOW SQL >= 500ms
+[642.290ms] [rows:1] INSERT INTO `file` (`file_hash`,`last_req_unixtime`,`size_byte`,`rel_path`,`status`) VALUES ("2f127f5f90425ead",1669900994,0,"2f12/7f5f/90425ead/2f127f5f90425ead","DOWNLOADING")
+2022-12-01 13:23:15 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:19 SLOW SQL >= 500ms
+[812.876ms] [rows:1] UPDATE `file` SET `last_req_unixtime`=1669900994,`size_byte`=910,`status`="DOWNLOADED" WHERE file_hash="18b53fc4c9eb1de9"
+2022-12-01 13:23:17 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[608.907ms] [rows:1] SELECT count(*) FROM `file` WHERE file_hash = "6acf96e3d840b2f0"
+2022-12-01 13:23:17 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[667.905ms] [rows:1] SELECT count(*) FROM `file` WHERE file_hash = "c75cde307f907387"
+2022-12-01 13:23:17 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[667.330ms] [rows:1] SELECT count(*) FROM `file` WHERE file_hash = "d4fce608d7d51c4b"
+2022-12-01 13:23:17 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[667.719ms] [rows:1] SELECT count(*) FROM `file` WHERE file_hash = "bf65b433c7b2d3d6"
+2022-12-01 13:23:17 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[628.942ms] [rows:1] SELECT count(*) FROM `file` WHERE file_hash = "9155b4353d0a4859"
+2022-12-01 13:23:17 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[530.418ms] [rows:1] SELECT count(*) FROM `file` WHERE file_hash = "99a4b3725d9a80d1"
+2022-12-01 13:23:17 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[528.722ms] [rows:1] SELECT count(*) FROM `file` WHERE file_hash = "3aa86213407f9979"
+2022-12-01 13:23:17 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[700.367ms] [rows:1] SELECT count(*) FROM `file` WHERE file_hash = "c3de0f1e3132dcc4"
+2022-12-01 13:23:17 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:29 SLOW SQL >= 500ms
+[892.144ms] [rows:1] DELETE FROM `file` WHERE file_hash="d13d1b406f43d105" AND `file`.`file_hash` = "d13d1b406f43d105"
+2022-12-01 13:23:18 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:19 SLOW SQL >= 500ms
+[597.321ms] [rows:1] UPDATE `file` SET `last_req_unixtime`=1669900997,`size_byte`=1700294,`status`="DOWNLOADED" WHERE file_hash="1aab0c7b50e62955"
+2022-12-04 00:32:36 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[1387.937ms] [rows:1] UPDATE `dbkv` SET `value`="ugdkagbzbm,lcbftjhjki" WHERE `key`="access_key"
+2022-12-04 00:32:36 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[673.880ms] [rows:1] SELECT count(*) FROM `file` WHERE last_req_unixtime < 1670092355 AND status IN ("DOWNLOADED")

@@ -51,14 +51,21 @@ class ChatViewSet(viewsets.ModelViewSet):
             print('***unique_code=', chat_.id, chat_.unique_code)
             channel_layer = get_channel_layer()
             user = request.user.id
-
             async_to_sync(channel_layer.group_send)(
-                f'notification_{request.user.id}',
-                {
-                    'type': 'fetch_one_room',
-                    'chat_id': chat_.id
-                }
-            )
+                    f'notification_{request.user.id}',
+                    {
+                        'type': 'fetch_one_room',
+                        'chat_id': chat_.id
+                    }
+                )
+            for i in chat_.participants.friends.all():
+                async_to_sync(channel_layer.group_send)(
+                    f'notification_{i.id}',
+                    {
+                        'type': 'fetch_one_room',
+                        'chat_id': chat_.id
+                    }
+                )
             return Response(data = {'chat_id': chat_.unique_code}, status=status.HTTP_201_CREATED)
         
 

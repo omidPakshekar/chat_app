@@ -17,24 +17,26 @@ services:
       - "5432"
     networks:
       - back
-  # nginx:
-  #   build: ./nginx
-  #   image: "nginx:latest"
-  #   # volumes:
-  #   #   - /static:/static
-  #   networks:
-  #     - front
-  #     - back
-  #   ports:
-  #     - "8001:80"
-  #   depends_on:
-  #     - frontend
-  #     - daphne
-  #     - web
-  #   links:
-  #     - frontend
-  #     - daphne
-  #     - web
+  nginx:
+    build: ./nginx
+    image: "nginx:latest"
+    command: [nginx-debug, '-g', 'daemon off;']
+    volumes:
+      - dist:/var/www/dist
+      - static:/static
+    networks:
+      - front
+      - back
+    ports:
+      - "80:8080"
+    depends_on:
+      - frontend
+      - daphne
+      - web
+    links:
+      - frontend
+      - daphne
+      - web
   
     # volumes:
     #   - type: 'bind'
@@ -74,31 +76,31 @@ services:
     links:
       - redis
       - db
-  worker:
-    build: ./app
-    image: "channel_prod:latest"
-    working_dir: /app/
-    command: bash -c "python manage.py runworker channel_layer"
-    volumes:
-      -  ./app:/app
-    env_file:
-      - ./app/app_env
-    networks:
-      - front
-      - back
-    depends_on:
-      - redis
-      - db
-    links:
-      - redis
-      - db
+  # worker:
+  #   build: ./app
+  #   image: "channel_prod:latest"
+  #   working_dir: /app/
+  #   command: bash -c "python manage.py runworker channel_layer"
+  #   volumes:
+  #     -  ./app:/app
+  #   env_file:
+  #     - ./app/app_env
+  #   networks:
+  #     - front
+  #     - back
+  #   depends_on:
+  #     - redis
+  #     - db
+  #   links:
+  #     - redis
+  #     - db
    
   web:
     build: ./app
     command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./app:/app
-      - ./static:/app/static
+      - static:/app/static
     ports:
       - "8000:8000"
     expose:
@@ -118,11 +120,11 @@ services:
       - CHOKIDAR_USEPOLLING=true
 
     build: 
-      context: ./Center
+      context: ./CHAT
     volumes:
-      - /Center/node_modules
-      - /Center/dist
-      - ./Center:/Center
+      - /CHAT/node_modules
+      - ./CHAT:/CHAT
+      - dist:/CHAT/dist
     ports:
       - "80:80"
     expose:
@@ -131,31 +133,11 @@ services:
       - back
       - front
 
-    
-    
-
-  # Celery
-  # celery:
-  #   restart: always
-  #   build: ./django_jobfinder_socialnetwrok
-  #   volumes:
-  #     - ./django_jobfinder_socialnetwrok:/django_jobfinder_socialnetwrok
-  #   command: celery -A core worker -l DEBUG
-
-  #   container_name: celery
-  #   networks:
-  #     - back
-  #   depends_on:
-  #     - redis
-  #     - web
-  #   links:
-  #     - redis
-  #     - web
-
 
 volumes:
   static:
   react_build:
+  dist:
 
 networks:
   front:

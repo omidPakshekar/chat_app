@@ -42,25 +42,28 @@ class ChatConsumer2(AsyncConsumer):
     
     @sync_to_async
     def message_to_json(self, message):
+
         return {
-            'id': message.id,
-            'senderid': message.sender.id,
+            '_id': message.id,
+            'senderId': message.sender.id,
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
             'timestamp': str(message.timestamp),
+            "date": str(message.date)
         }
 
     def parent_message_to_json(self, message):
         if message == None:
             return {}
         return {
-            'id': message.id,
-            'senderid': message.sender.id,
+            '_id': message.id,
+            'senderId': message.sender.id,
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
-            'timestamp': str(message.timestamp)
+            'timestamp': str(message.timestamp),
+            "date": str(message.date)
         }
 
     @sync_to_async
@@ -68,20 +71,26 @@ class ChatConsumer2(AsyncConsumer):
         result = []
         for message in messages:
             if message.item._meta.model_name == 'image':
-                result.append({'id': message.id,
-                    'senderid': message.sender.id,
+                result.append({'_id': message.id,
+                    'senderId': message.sender.id,
                     'username': message.sender.username,
                     'type': 'image',
                     'content': ImageCreateSerializer(instance=message.item).data['content'],
                     'timestamp': str(message.timestamp),
+                    "date": str(message.date),
                     'replyMessage':  self.parent_message_to_json(message.parent_message)
                     })
             else:
-                result.append({'id': message.id,
-                    'senderid': message.sender.id,
+                print('&&&&&&&&&&&&&&&&&&&')
+                print(message.timestamp)
+                print('&&&&&&&&&&&&&&&&&&&')
+                
+                result.append({'_id': message.id,
+                    'senderId': message.sender.id,
                     'username': message.sender.username,
                     'content': message.item.content,
                     'timestamp': str(message.timestamp),
+                    "date": str(message.date),
                     'type' : 'text',
                     'replyMessage':  self.parent_message_to_json(message.parent_message)
                 })
@@ -145,7 +154,8 @@ class ChatConsumer2(AsyncConsumer):
             self.chat_room_id,
             {
                 'type': 'chat_message',
-                'message': message
+                'message': message,
+                'sender_channel_name': self.channel_name
             }
         )
 
@@ -157,7 +167,8 @@ class ChatConsumer2(AsyncConsumer):
 
     async def chat_message(self, event):
         message = event['message']
-        await self.send({
+        if self.channel_name != event['sender_channel_name']:
+            await self.send({
             'type' : 'websocket.send',
             'text' :json.dumps(message)
             })
@@ -222,8 +233,8 @@ class ChatConsumer(AsyncConsumer):
     @sync_to_async
     def message_to_json(self, message):
         return {
-            'id': message.id,
-            'senderid': message.sender.id,
+            '_id': message.id,
+            'senderId': message.sender.id,
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
@@ -234,8 +245,8 @@ class ChatConsumer(AsyncConsumer):
         if message == None:
             return {}
         return {
-            'id': message.id,
-            'senderid': message.sender.id,
+            '_id': message.id,
+            'senderId': message.sender.id,
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
@@ -247,8 +258,8 @@ class ChatConsumer(AsyncConsumer):
         result = []
         for message in messages:
             if message.item._meta.model_name == 'image':
-                result.append({'id': message.id,
-                    'senderid': message.sender.id,
+                result.append({'_id': message.id,
+                    'senderId': message.sender.id,
                     'username': message.sender.username,
                     'type': 'image',
                     'content': ImageCreateSerializer(instance=message.item).data['content'],
@@ -256,8 +267,8 @@ class ChatConsumer(AsyncConsumer):
                     'replyMessage':  self.parent_message_to_json(message.parent_message)
                     })
             else:
-                result.append({'id': message.id,
-                    'senderid': message.sender.id,
+                result.append({'_id': message.id,
+                    'senderId': message.sender.id,
                     'username': message.sender.username,
                     'content': message.item.content,
                     'timestamp': str(message.timestamp),
@@ -419,7 +430,7 @@ class RoomConsumer(AsyncConsumer):
             message = room.messages.last()
             last_message = None
             if message != None:
-                last_message = {'id' : message.id,
+                last_message = {'_id' : message.id,
                                 'sender' : message.sender.username,
                                 'content' : message.item.content,
                                 'timestamp': str(message.timestamp)}

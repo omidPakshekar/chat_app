@@ -11,10 +11,11 @@ router = DefaultRouter()
 router.register('', UserViewSet, basename='')
 
 urlpatterns = [
-    path('', include(router.urls)),
     path('register/', RegisterView.as_view()),
     path('login/', CustomUserLogin.as_view()),
     path('logout/', LogoutView.as_view()),
     path('search-username/', SearchUsername.as_view()),
+    path('', include(router.urls)),
+
 
 ]    
