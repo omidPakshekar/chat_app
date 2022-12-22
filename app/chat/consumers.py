@@ -121,7 +121,6 @@ class ChatConsumer2(AsyncConsumer):
         return CustomUser.objects.get(username=username)
 
     async def websocket_connect(self, event):
-        print()
         self.user = await self.get_user1(username=self.scope['url_route']['kwargs']['username'])
         self.chat_id = self.scope['url_route']['kwargs']['chat_id']
         self.chat = await self.get_chat()
