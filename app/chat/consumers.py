@@ -52,7 +52,8 @@ class ChatConsumer2(AsyncConsumer):
     
     @sync_to_async
     def message_to_json(self, message):
-
+        m = message.timestamp.minute
+        h = message.timestamp.hour
         return {
             '_id': message.id,
             'senderId': message.sender.id,
@@ -60,13 +61,18 @@ class ChatConsumer2(AsyncConsumer):
             'content': message.item.content,
             'type' : 'text',
             'avatar' : "https://picsum.photos/200",
-            'timestamp': str(message.timestamp),
+            'timestamp': f'{f"0{h}" if h < 10 else f"{h}"}:{f"0{m}" if m < 10 else "{m}"}',
             "date": str(message.date)
         }
 
     def parent_message_to_json(self, message):
         if message == None:
             return {}
+        print('6', message, 'f', message.timestamp, 'ff', message.date)
+        print('ff', message.timestamp)
+
+        m = message.timestamp.minute
+        h = message.timestamp.hour
         return {
             '_id': message.id,
             'senderId': message.sender.id,
@@ -74,7 +80,7 @@ class ChatConsumer2(AsyncConsumer):
             'content': message.item.content,
             'type' : 'text',
             'avatar' : "https://picsum.photos/200",
-            'timestamp': str(message.timestamp),
+            'timestamp': f'{f"0{h}" if h < 10 else f"{h}"}:{f"0{m}" if m < 10 else "{m}"}',
             "date": str(message.date)
         }
 
@@ -94,18 +100,20 @@ class ChatConsumer2(AsyncConsumer):
                     'replyMessage':  self.parent_message_to_json(message.parent_message)
                     })
             else:
+                m = message.timestamp.minute
+                h = message.timestamp.hour
                 print(message.timestamp)
                 result.append({'_id': message.id,
                     'senderId': message.sender.id,
                     'username': message.sender.username,
                     'content': message.item.content,
-                    'timestamp': str(message.timestamp),
+                    'timestamp': f'{f"0{h}" if h < 10 else f"{h}"}:{f"0{m}" if m < 10 else "{m}"}',
                     "date": str(message.date),
                     'type' : 'text',
                     'avatar' : "https://picsum.photos/200",
                     'replyMessage':  self.parent_message_to_json(message.parent_message)
                 })
-
+        print(result)
         return result
 
     
