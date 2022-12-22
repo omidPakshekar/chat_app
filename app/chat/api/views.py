@@ -99,7 +99,36 @@ class FileCreateView(generics.CreateAPIView):
         Message.objects.create(item=image_, sender=self.request.user, reciever=reciever_)
         return Response({'detail' : "it's created"}, status=status.HTTP_201_CREATED)
 
-    
+
+
+
+class DeleteMessageView(generics.GenericAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageIdSerializer
+
+
+    def post(self, *args, **kwargs):
+        obj = Message.objects.get(id=int(self.request.data['message_id']))
+        channel_layer = get_channel_layer()
+        if self.request.user == obj.sender:
+            chat_ = obj.chat_set.last()
+            obj.delete()
+            async_to_sync(channel_layer.group_send)(
+                f'chat_{chat_.id}',
+                {
+                'type': 'fetch_messages_view',
+                 "command": "messages",
+                }
+            )
+            return Response({'detail': 'message delete succsessfully'}, status=status.HTTP_200_OK)
+
+        return Response({'detail': 'you are not owner'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+   
 # class AddUserContact(views.APIView):
 #     queryset = Contact.objects.all()
 #     serializer_class = ContactSerializer

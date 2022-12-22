@@ -16,6 +16,8 @@ class ChatContactSerializer(serializers.ModelSerializer):
         fields = ('id', 'contact', )
         read_only = ('id')
 
+class MessageIdSerializer(serializers.Serializer):
+    message_id = serializers.IntegerField()
 
 class ChatSerializer(serializers.ModelSerializer):
     roomName = serializers.SerializerMethodField(read_only=True)

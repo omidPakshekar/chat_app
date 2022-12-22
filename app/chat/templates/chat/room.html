@@ -49,7 +49,7 @@
     <script>
       var roomSocket = new WebSocket(
         'ws://' + window.location.host +
-        '/ws/room/');
+        '/ws/room2/omid/');
         
         roomSocket.onopen = function(e) {
           fetch_room();
@@ -127,7 +127,7 @@
         var chat_id ='rcdfvWFWxAYiFyPyrtgqmQUYgAxOVNKrzvz';
         var chatSocket = new WebSocket(
         'ws://' + window.location.host +
-        '/ws/chat2/' + chat_id + '/' +'test2/');
+        '/ws/chat2/' + chat_id + '/' +'test1/');
           
     chatSocket.onopen = function(e) {
       fetchMessages();

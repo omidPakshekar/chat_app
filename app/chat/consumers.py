@@ -27,8 +27,18 @@ class ChatConsumer2(AsyncConsumer):
             'command': 'messages',
             'messages': await self.messages_to_json(messages)
         }
-        print('****\n', content, "\n*****")
         await self.send_message(content)
+
+    async def fetch_messages_view(self, data):
+        messages = await self.get_all_message()
+        content = {
+            'command': 'messages',
+            'messages': await self.messages_to_json(messages)
+        }
+        await self.send({
+            'type' : 'websocket.send',
+            'text' :json.dumps(content)
+            })
 
     
     async def new_message(self, data):
@@ -49,6 +59,7 @@ class ChatConsumer2(AsyncConsumer):
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
+            'avatar' : "https://picsum.photos/200",
             'timestamp': str(message.timestamp),
             "date": str(message.date)
         }
@@ -62,6 +73,7 @@ class ChatConsumer2(AsyncConsumer):
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
+            'avatar' : "https://picsum.photos/200",
             'timestamp': str(message.timestamp),
             "date": str(message.date)
         }
@@ -78,13 +90,11 @@ class ChatConsumer2(AsyncConsumer):
                     'content': ImageCreateSerializer(instance=message.item).data['content'],
                     'timestamp': str(message.timestamp),
                     "date": str(message.date),
+                    'avatar' : "https://picsum.photos/200",
                     'replyMessage':  self.parent_message_to_json(message.parent_message)
                     })
             else:
-                print('&&&&&&&&&&&&&&&&&&&')
                 print(message.timestamp)
-                print('&&&&&&&&&&&&&&&&&&&')
-                
                 result.append({'_id': message.id,
                     'senderId': message.sender.id,
                     'username': message.sender.username,
@@ -92,6 +102,7 @@ class ChatConsumer2(AsyncConsumer):
                     'timestamp': str(message.timestamp),
                     "date": str(message.date),
                     'type' : 'text',
+                    'avatar' : "https://picsum.photos/200",
                     'replyMessage':  self.parent_message_to_json(message.parent_message)
                 })
 
@@ -185,7 +196,7 @@ class ChatConsumer2(AsyncConsumer):
     def create_message(self, data):
         message_ = None 
         print(data)
-        self.sender = CustomUser.objects.get(username=data['username'])
+        self.sender = self.user
         reciever_ = UserMessage.objects.create()
         reciever_.users.add(*self.participants.friends.all()); reciever_.save()
         if data['message_type'] == 'text':
@@ -381,6 +392,199 @@ class ChatConsumer(AsyncConsumer):
         return self.chat.messages.all()
     
 
+
+
+
+class RoomConsumer2(AsyncConsumer):
+
+    async def fetch_room(self, data):
+        rooms = await self.get_all_room()
+        content = {
+            'command': 'rooms',
+            'rooms': await self.rooms_to_json(rooms)
+        }
+        await self.send_message(content)
+
+    async def fetch_one_room(self, data):
+        room = await self.get_one_chat(data['chat_id'])
+        content = {
+            'command': 'new_room',
+            'room': await self.room_to_json(room)
+        }
+        print('ff', content)
+        await self.send({
+            'type' : 'websocket.send',
+            'text' :json.dumps(content)
+            })
+
+
+    @sync_to_async
+    def get_one_chat(self, chat_id):
+        return Chat.objects.get(id=int(chat_id))
+
+    async def new_room(self, data):
+        message_ = await self.create_new_room(data)
+        content = {
+            'command': 'new_room',
+            'room':  await self.room_to_json(message_)
+        }
+        return await self.send_room_message(content)
+
+    @sync_to_async
+    def rooms_to_json(self, rooms):
+        result = []
+        for room in rooms:
+            # user = None
+            roomName = None
+            if self.user == room.participants.owner:
+                roomName = room.participants.friends.first().username
+            else:
+                roomName =  room.participants.owner.username
+            message = room.messages.last()
+            last_message = None
+            if message != None:
+                last_message = {'_id' : message.id,
+                                'sender' : message.sender.username,
+                                'content' : message.item.content,
+                                'timestamp': str(message.timestamp)}
+            lst = []
+            
+            for user in  room.participants.friends.all():
+                lst.append({
+                    "_id" : user.id,
+                    "username": user.username,
+                    'avatar' : "https://picsum.photos/200"
+                    })
+            lst.append({
+            "_id" : room.participants.owner.id,
+            "username": room.participants.owner.username,
+            'avatar' : "https://picsum.photos/200"
+            })
+
+            result.append({'roomId': room.id,
+                'roomName': roomName,
+                'unique_code': room.unique_code,
+                'avatar' : "https://picsum.photos/200",
+                'users' : lst,
+                'last_message': last_message
+            })
+        return result
+
+    @sync_to_async
+    def room_to_json(self, room):
+        roomName = None
+        if self.user == room.participants.owner:
+            roomName = room.participants.friends.first().username
+        else:
+            roomName =  room.participants.owner.username
+
+        lst = []
+            
+        for user in  room.participants.friends.all():
+            lst.append({
+                "_id" : user.id,
+                "username": user.username,
+                'avatar' : "https://picsum.photos/200"
+                })
+        lst.append({
+	        "_id" : room.participants.owner.id,
+	        "username": room.participants.owner.username,
+	        'avatar' : "https://picsum.photos/200"
+        })
+        return {
+            'roomId': room.id,
+            'roomName': roomName,
+            'unique_code': room.unique_code,
+            'users': lst
+        }
+
+    commands = {
+        'fetch_room': fetch_room,
+        'new_room': new_room
+    }
+    
+    @sync_to_async
+    def get_user1(self, username):
+        return CustomUser.objects.get(username=username)
+
+    async def websocket_connect(self, event):
+        self.user = await self.get_user1(username=self.scope['url_route']['kwargs']['username'])
+        self.chat = await self.get_chat()
+        self.chat_room_id = f"notification_{self.user.id}"
+        if self.user.is_authenticated:
+                await self.channel_layer.group_add(
+                    self.chat_room_id,
+                    self.channel_name
+                )
+                await self.send({'type': 'websocket.accept'})
+        else:
+            await self.send({'type': 'websocket.close'})
+
+    async def websocket_disconnect(self, close_code):
+        await (self.channel_layer.group_discard)(
+            self.chat_room_id,
+            self.channel_name
+        )
+        raise StopConsumer()
+
+
+    async def websocket_receive(self, event):
+        text_data = event.get('text', None)
+        data = json.loads(text_data)
+        if  data['command'] == 'new_room' :
+            if not data['message'] == '':
+                await self.new_room(data)
+        else:
+            await self.fetch_room(data)
+
+    async def send_room_message(self, message):
+        await self.channel_layer.group_send(
+            self.chat_room_id,
+            {
+                'type': 'room_message',
+                'message': message
+            }
+        )
+
+    async def send_message(self, message):
+        await self.send({
+            'type' : 'websocket.send',
+            'text' :json.dumps(message)
+            })
+
+    async def room_message(self, event):
+        message = event['message']
+        await self.send({
+            'type' : 'websocket.send',
+            'text' :json.dumps(message)
+            })
+            
+
+    @database_sync_to_async
+    def create_new_room(self, data):
+        message_ = None 
+        # print(data)
+        # self.sender = CustomUser.objects.get(username=data['sender'])
+        # reciever_ = UserMessage.objects.create()
+        # reciever_.users.add(*self.participants.friends.all()); reciever_.save()
+        # if data['message_type'] == 'text':
+        #     text_ = Text.objects.create(owner=self.user,  content=data['message'])
+        #     message_ = Message.objects.create(sender=self.sender, reciever=reciever_, item=text_)
+
+        # self.chat.messages.add(message_)
+        return message_
+    
+    @database_sync_to_async
+    def get_chat(self):
+        try:
+            chat = Chat.objects.all()
+            return chat
+        except Chat.DoesNotExist:
+            return None
+
+    @sync_to_async
+    def get_all_room(self):
+        return self.chat
 
 
 class RoomConsumer(AsyncConsumer):

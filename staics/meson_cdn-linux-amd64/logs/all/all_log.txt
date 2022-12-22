@@ -34,3 +34,31 @@
 [1387.937ms] [rows:1] UPDATE `dbkv` SET `value`="ugdkagbzbm,lcbftjhjki" WHERE `key`="access_key"
 2022-12-04 00:32:36 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
 [673.880ms] [rows:1] SELECT count(*) FROM `file` WHERE last_req_unixtime < 1670092355 AND status IN ("DOWNLOADED")
+2022-12-05 15:05:44 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-05 15:06:14 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": dial tcp 52.53.44.43:443: i/o timeout (Client.Timeout exceeded while awaiting headers)
+2022-12-05 15:06:44 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-08 11:40:20 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-08 16:38:50 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-08 16:38:55 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": dial tcp: lookup cdn.meson.network: Try again
+2022-12-08 16:39:25 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": dial tcp: lookup cdn.meson.network: Try again
+2022-12-08 16:39:55 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": dial tcp: lookup cdn.meson.network: Try again
+2022-12-09 17:42:52 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-09 18:33:52 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-09 18:34:22 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-09 18:34:52 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-09 18:35:22 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-10 04:22:36 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[1351.627ms] [rows:1] UPDATE `dbkv` SET `value`="hsphfewdgf,ukvtcwifhb" WHERE `key`="access_key"
+2022-12-11 12:06:57 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-11 12:07:02 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": dial tcp: lookup cdn.meson.network: Try again
+2022-12-11 12:07:32 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": dial tcp: lookup cdn.meson.network: Try again
+2022-12-11 12:13:27 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-11 14:07:36 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[637.810ms] [rows:1] UPDATE `dbkv` SET `value`="djafsinjlp,ppbzoazysp" WHERE `key`="access_key"
+2022-12-11 20:51:27 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-15 05:02:37 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[1856.537ms] [rows:1] UPDATE `dbkv` SET `value`="zqafjpiqef,exmjkefnmq" WHERE `key`="access_key"
+2022-12-15 05:02:37 [WARN] /Users/bruce/workspace/go/project/peer-node/src/file_mgr/file_db.go:101 SLOW SQL >= 500ms
+[529.713ms] [rows:1] SELECT count(*) FROM `file` WHERE last_req_unixtime < 1671058957 AND status IN ("DOWNLOADED")
+2022-12-20 18:52:39 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[985.706ms] [rows:1] UPDATE `dbkv` SET `value`="jqnigyiymi,qnkowiavnq" WHERE `key`="access_key"

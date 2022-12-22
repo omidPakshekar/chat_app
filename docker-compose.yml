@@ -17,26 +17,26 @@ services:
       - "5432"
     networks:
       - back
-  nginx:
-    build: ./nginx
-    image: "nginx:latest"
-    command: [nginx-debug, '-g', 'daemon off;']
-    volumes:
-      - dist:/var/www/dist
-      - static:/static
-    networks:
-      - front
-      - back
-    ports:
-      - "80:8080"
-    depends_on:
-      - frontend
-      - daphne
-      - web
-    links:
-      - frontend
-      - daphne
-      - web
+  # nginx:
+  #   build: ./nginx
+  #   image: "nginx:latest"
+  #   command: [nginx-debug, '-g', 'daemon off;']
+  #   volumes:
+  #     - dist:/var/www/dist
+  #     - static:/static
+  #   networks:
+  #     - front
+  #     - back
+  #   ports:
+  #     - "80:8080"
+  #   depends_on:
+  #     - frontend
+  #     - daphne
+  #     - web
+  #   links:
+  #     - frontend
+  #     - daphne
+  #     - web
   
     # volumes:
     #   - type: 'bind'
