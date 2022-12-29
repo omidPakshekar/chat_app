@@ -142,6 +142,11 @@
         } else if (data['command'] === 'new_message'){
           createMessage(data['message']);                                                 
         }
+        console.log("%%%%%%%%%%%%%%%%%%");
+        console.log(data['command']);
+        console.log("%%%%%%%%%%%%%%%%%%");
+
+
     };
 
     chatSocket.onclose = function(e) {

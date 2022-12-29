@@ -102,6 +102,155 @@ class FileCreateView(generics.CreateAPIView):
 
 
 
+class DeleteRoomView(generics.GenericAPIView):
+    queryset = Message.objects.all()
+    serializer_class = RoomDeleteSerializer
+
+
+    def post(self, *args, **kwargs):
+        obj = Chat.objects.get(id=int(self.request.data['room_id']))
+        channel_layer = get_channel_layer()
+        delete_type = self.request.data['room_type']
+        if delete_type == '1':
+
+            async_to_sync(channel_layer.group_send)(
+                f'notification_{self.request.user}',
+                {
+                'type': 'delete_one_way',
+                 "command": "delete_one_way",
+                 "room_id": str(obj.id),
+
+                }
+            )
+            obj.hide_user.add(self.request.user)
+            obj.save()
+            return Response({'detail': 'message delete succsessfully'}, status=status.HTTP_200_OK)
+        else:
+            if self.request.user == obj.participants.owner:
+                async_to_sync(channel_layer.group_send)(
+                f'notification_{self.request.user}',
+                    {
+                    'type': 'delete_two_way',
+                     "command": "delete_two_way",
+                     "room_id": str(obj.id),
+
+                    }
+                )
+                obj.hide = True
+                obj.save()
+                return Response({'detail': 'message delete succsessfully'}, status=status.HTTP_200_OK)
+
+            return Response({'detail': 'you are not owner'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+class DeleteRoomViewOneWay(generics.GenericAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageIdSerializer
+
+    def post(self, *args, **kwargs):
+        obj = Message.objects.get(id=int(self.request.data['message_id']))
+        channel_layer = get_channel_layer()
+        chat_ = obj.chat_set.last()
+        obj.recievers.remove(self.request.user)
+        async_to_sync(channel_layer.group_send)(
+            f'chat_{chat_.unique_code}',
+            {
+            'type': 'delete_one_way',
+             "command": "delete_one_way",
+             "message_id": str(obj.id),
+
+            }
+        )
+        return Response({'detail': 'message delete succsessfully'}, status=status.HTTP_200_OK)
+
+
+
+class DeleteMessageViewTwoWay(generics.GenericAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageIdSerializer
+
+    def post(self, *args, **kwargs):
+        obj = Message.objects.get(id=int(self.request.data['message_id']))
+        channel_layer = get_channel_layer()
+        if self.request.user == obj.sender:
+            chat_ = obj.chat_set.last()
+            async_to_sync(channel_layer.group_send)(
+                f'chat_{chat_.unique_code}',
+                {
+                'type': 'delete_two_way',
+                 "command": "delete_two_way",
+                 "message_id": str(obj.id),
+
+                }
+            )
+            obj.delete()
+            return Response({'detail': 'message delete succsessfully'}, status=status.HTTP_200_OK)
+
+        return Response({'detail': 'you are not owner'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class DeleteMessageViewOneWay(generics.GenericAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageIdSerializer
+
+    def post(self, *args, **kwargs):
+        pass
+        
+
+
+# class DeleteMessageViewTwoWay(generics.GenericAPIView):
+#     queryset = Message.objects.all()
+#     serializer_class = MessageIdSerializer
+
+#     def post(self, *args, **kwargs):
+#         obj = Message.objects.get(id=int(self.request.data['message_id']))
+#         channel_layer = get_channel_layer()
+#         if self.request.user == obj.sender:
+#             chat_ = obj.chat_set.last()
+#             obj.delete()
+#             async_to_sync(channel_layer.group_send)(
+#                 f'chat_{chat_.id}',
+#                 {
+#                 'type': 'fetch_messages_view',
+#                  "command": "messages",
+#                 }
+#             )
+#             return Response({'detail': 'message delete succsessfully'}, status=status.HTTP_200_OK)
+
+#         return Response({'detail': 'you are not owner'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+class ChangeMessageContentView(generics.GenericAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageContentSerializer
+
+
+    def post(self, *args, **kwargs):
+        obj = Message.objects.get(id=int(self.request.data['message_id']))
+        channel_layer = get_channel_layer()
+        content = self.request.data['content']
+        chat_ = obj.chat_set.last()
+        item_ = obj.item
+        item_.content = content
+        item_.save()
+        async_to_sync(channel_layer.group_send)(
+                f'chat_{chat_.unique_code}',
+                {
+                'type': 'change_content',
+                 "command": "change_content",
+                 "message_id": str(obj.id),
+                }
+            )
+        return Response({'detail': 'message changed'}, status=status.HTTP_200_OK)
+
+
 class DeleteMessageView(generics.GenericAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageIdSerializer
@@ -110,19 +259,38 @@ class DeleteMessageView(generics.GenericAPIView):
     def post(self, *args, **kwargs):
         obj = Message.objects.get(id=int(self.request.data['message_id']))
         channel_layer = get_channel_layer()
-        if self.request.user == obj.sender:
-            chat_ = obj.chat_set.last()
-            obj.delete()
+        delete_type = self.request.data['message_type']
+        print('dddd', delete_type)
+        chat_ = obj.chat_set.last()
+        if delete_type == '1':
+            print('ffffffffffffffffffffffffffffffd')
+            obj.recievers.remove(self.request.user)
             async_to_sync(channel_layer.group_send)(
-                f'chat_{chat_.id}',
+                f'chat_{chat_.unique_code}',
                 {
-                'type': 'fetch_messages_view',
-                 "command": "messages",
+                'type': 'delete_one_way',
+                 "command": "delete_one_way",
+                 "message_id": str(obj.id),
+
                 }
             )
             return Response({'detail': 'message delete succsessfully'}, status=status.HTTP_200_OK)
+        else:
+            if self.request.user == obj.sender:
+                chat_ = obj.chat_set.last()
+                async_to_sync(channel_layer.group_send)(
+                    f'chat_{chat_.unique_code}',
+                    {
+                    'type': 'delete_two_way',
+                     "command": "delete_two_way",
+                     "message_id": str(obj.id),
 
-        return Response({'detail': 'you are not owner'}, status=status.HTTP_400_BAD_REQUEST)
+                    }
+                )
+                obj.delete()
+                return Response({'detail': 'message delete succsessfully'}, status=status.HTTP_200_OK)
+
+            return Response({'detail': 'you are not owner'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

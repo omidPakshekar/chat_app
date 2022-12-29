@@ -18,6 +18,15 @@ class ChatContactSerializer(serializers.ModelSerializer):
 
 class MessageIdSerializer(serializers.Serializer):
     message_id = serializers.IntegerField()
+    message_type = serializers.IntegerField()
+
+class MessageContentSerializer(serializers.Serializer):
+    message_id = serializers.IntegerField()
+    content    = serializers.CharField()
+
+class RoomDeleteSerializer(serializers.Serializer):
+    room_id = serializers.IntegerField()
+    room_type = serializers.IntegerField()
 
 class ChatSerializer(serializers.ModelSerializer):
     roomName = serializers.SerializerMethodField(read_only=True)

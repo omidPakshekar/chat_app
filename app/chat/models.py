@@ -10,6 +10,10 @@ def UniqueGenerator(length=35):
     letters = string.ascii_letters
     return ''.join([random.choice(letters) for i in range(length)])
 
+def UniqueGeneratorOneToOne(length=30):
+    letters = string.ascii_letters
+    return ''.join([random.choice(letters) for i in range(length)])
+
 class Contact(models.Model):
     owner       = models.ForeignKey(CustomUser, related_name='contacts', on_delete=models.CASCADE)
     friends     = models.ManyToManyField(CustomUser, blank=True)
@@ -27,7 +31,7 @@ class UserMessage(models.Model):
 
 class Message(models.Model):
     sender         = models.ForeignKey(CustomUser, related_name='messages_sender', on_delete=models.CASCADE)
-    reciever       = models.ForeignKey(UserMessage, related_name='messages_recievers', on_delete=models.CASCADE)
+    recievers       = models.ManyToManyField(CustomUser, related_name='messages_recievers')
     parent_message = models.ForeignKey('Message', related_name='child', null=True, on_delete=models.SET_NULL, blank=True)
     timestamp      = models.TimeField(auto_now_add=True)
     # created_time   = models.DateTimeField(auto_now_add = True)
@@ -65,6 +69,35 @@ class Chat(models.Model):
     unique_code  = models.CharField(max_length=35, default=UniqueGenerator)
     participants = models.ForeignKey(Contact, related_name='chats', blank=True, on_delete=models.CASCADE)
     messages     = models.ManyToManyField(Message, blank=True)
+    hide         = models.BooleanField(default=False)
+    hide_user    = models.ManyToManyField(CustomUser, related_name='room_hide')
+
+    def last_10_messages():
+        return Message.objects.all().order_by('-timestamp')[:10]
+    def __str__(self):
+        return "{}".format(self.pk)
+
+    @property
+    def contact_owner(self):
+        return self.participants
+    @property
+    def contact_id(self):
+        return self.participants.id
+
+
+class ContactOneToOne(models.Model):
+    owner       = models.ForeignKey(CustomUser, related_name='contactOneToOnes', on_delete=models.CASCADE)
+    friend      = models.ForeignKey(CustomUser, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.owner.username
+    
+class ChatOneToOne(models.Model):
+    unique_code  = models.CharField(max_length=35, default=UniqueGeneratorOneToOne)
+    participants = models.ForeignKey(ContactOneToOne, related_name='chats', blank=True, on_delete=models.CASCADE)
+    messages     = models.ManyToManyField(Message, blank=True)
+    hide         = models.BooleanField(default=False)
+    hide_user    = models.ManyToManyField(CustomUser, related_name='room_hide')
 
     def last_10_messages():
         return Message.objects.all().order_by('-timestamp')[:10]

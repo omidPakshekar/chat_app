@@ -39,6 +39,37 @@ class ChatConsumer2(AsyncConsumer):
             'type' : 'websocket.send',
             'text' :json.dumps(content)
             })
+	
+    async def delete_two_way(self, data):
+        content = {
+            'command': 'delete_two_way',
+            'message_id': data['message_id']
+        }
+        await self.send({
+            'type' : 'websocket.send',
+            'text' :json.dumps(content)
+        })
+
+    async def delete_one_way(self, data):
+        content = {
+            'command': 'delete_one_way',
+            'message_id': data['message_id']
+        }
+        await self.send({
+            'type' : 'websocket.send',
+            'text' :json.dumps(content)
+        })
+    async def change_content(self, data):
+        content = {
+            'command': 'change_content',
+            'message_id': data['message_id']
+        }
+        await self.send({
+            'type' : 'websocket.send',
+            'text' :json.dumps(content)
+        })
+
+
 
     
     async def new_message(self, data):
@@ -56,18 +87,19 @@ class ChatConsumer2(AsyncConsumer):
         h = message.timestamp.hour
         return {
             '_id': message.id,
-            'senderId': message.sender.id,
+            'senderId': str(message.sender.id),
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
             'avatar' : "https://picsum.photos/200",
-            'timestamp': f'{f"0{h}" if h < 10 else f"{h}"}:{f"0{m}" if m < 10 else "{m}"}',
-            "date": str(message.date)
+            'timestamp': f'{f"0{h}" if h < 10 else f"{h}"}:{f"0{m}" if m < 10 else f"{m}"}',
+            "date": str(message.date),
+            'replyMessage':  self.parent_message_to_json(message.parent_message)
         }
 
     def parent_message_to_json(self, message):
         if message == None:
-            return {}
+            return None
         print('6', message, 'f', message.timestamp, 'ff', message.date)
         print('ff', message.timestamp)
 
@@ -75,12 +107,12 @@ class ChatConsumer2(AsyncConsumer):
         h = message.timestamp.hour
         return {
             '_id': message.id,
-            'senderId': message.sender.id,
+            'senderId': str(message.sender.id),
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
             'avatar' : "https://picsum.photos/200",
-            'timestamp': f'{f"0{h}" if h < 10 else f"{h}"}:{f"0{m}" if m < 10 else "{m}"}',
+            'timestamp': f'{f"0{h}" if h < 10 else f"{h}"}:{f"0{m}" if m < 10 else f"{m}"}',
             "date": str(message.date)
         }
 
@@ -90,7 +122,7 @@ class ChatConsumer2(AsyncConsumer):
         for message in messages:
             if message.item._meta.model_name == 'image':
                 result.append({'_id': message.id,
-                    'senderId': message.sender.id,
+                    'senderId': str(message.sender.id),
                     'username': message.sender.username,
                     'type': 'image',
                     'content': ImageCreateSerializer(instance=message.item).data['content'],
@@ -104,10 +136,10 @@ class ChatConsumer2(AsyncConsumer):
                 h = message.timestamp.hour
                 print(message.timestamp)
                 result.append({'_id': message.id,
-                    'senderId': message.sender.id,
+                    'senderId': str(message.sender.id),
                     'username': message.sender.username,
                     'content': message.item.content,
-                    'timestamp': f'{f"0{h}" if h < 10 else f"{h}"}:{f"0{m}" if m < 10 else "{m}"}',
+                    'timestamp': f'{f"0{h}" if h < 10 else f"{h}"}:{f"0{m}" if m < 10 else f"{m}"}',
                     "date": str(message.date),
                     'type' : 'text',
                     'avatar' : "https://picsum.photos/200",
@@ -183,10 +215,16 @@ class ChatConsumer2(AsyncConsumer):
             'text' :json.dumps(message)
             })
 
+    # async def chat_message(self, event):
+    #     message = event['message']
+    #     if self.channel_name != event['sender_channel_name']:
+    #         await self.send({
+    #         'type' : 'websocket.send',
+    #         'text' :json.dumps(message)
+    #         })
     async def chat_message(self, event):
         message = event['message']
-        if self.channel_name != event['sender_channel_name']:
-            await self.send({
+        await self.send({
             'type' : 'websocket.send',
             'text' :json.dumps(message)
             })
@@ -204,8 +242,6 @@ class ChatConsumer2(AsyncConsumer):
         message_ = None 
         print(data)
         self.sender = self.user
-        reciever_ = UserMessage.objects.create()
-        reciever_.users.add(*self.participants.friends.all()); reciever_.save()
         if data['message_type'] == 'text':
             parent = None 
             if 'parent_message' in data:
@@ -213,8 +249,11 @@ class ChatConsumer2(AsyncConsumer):
                     parent_id = int(data['parent_message'])
                     parent = Message.objects.get(id=parent_id)
             text_ = Text.objects.create(owner=self.user,  content=data['message'])
-            message_ = Message.objects.create(sender=self.sender, reciever=reciever_, item=text_, parent_message=parent)
-
+            message_ = Message.objects.create(sender=self.sender,  item=text_, parent_message=parent)
+            message_.recievers.add(*self.participants.friends.all())
+            message_.recievers.add(self.participants.owner)
+            message_.recievers.add(self.user)
+            message_.save()
         self.chat.messages.add(message_)
         return message_
     
@@ -224,8 +263,12 @@ class ChatConsumer2(AsyncConsumer):
         
     @sync_to_async
     def get_all_message(self):
-        return self.chat.messages.all()
-    
+        lst = []
+        for i in  self.chat.messages.all():
+            if self.user in i.recievers.all():
+                lst.append(i)
+        return lst
+
 
 class ChatConsumer(AsyncConsumer):
 
@@ -252,7 +295,7 @@ class ChatConsumer(AsyncConsumer):
     def message_to_json(self, message):
         return {
             '_id': message.id,
-            'senderId': message.sender.id,
+            'senderId': str(message.sender.id),
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
@@ -261,10 +304,10 @@ class ChatConsumer(AsyncConsumer):
 
     def parent_message_to_json(self, message):
         if message == None:
-            return {}
+            return None
         return {
             '_id': message.id,
-            'senderId': message.sender.id,
+            'senderId': str(message.sender.id),
             'username': message.sender.username,
             'content': message.item.content,
             'type' : 'text',
@@ -277,7 +320,7 @@ class ChatConsumer(AsyncConsumer):
         for message in messages:
             if message.item._meta.model_name == 'image':
                 result.append({'_id': message.id,
-                    'senderId': message.sender.id,
+                    'senderId': str(message.sender.id),
                     'username': message.sender.username,
                     'type': 'image',
                     'content': ImageCreateSerializer(instance=message.item).data['content'],
@@ -286,7 +329,7 @@ class ChatConsumer(AsyncConsumer):
                     })
             else:
                 result.append({'_id': message.id,
-                    'senderId': message.sender.id,
+                    'senderId': str(message.sender.id),
                     'username': message.sender.username,
                     'content': message.item.content,
                     'timestamp': str(message.timestamp),
@@ -418,11 +461,30 @@ class RoomConsumer2(AsyncConsumer):
             'command': 'new_room',
             'room': await self.room_to_json(room)
         }
-        print('ff', content)
         await self.send({
             'type' : 'websocket.send',
             'text' :json.dumps(content)
             })
+
+    async def delete_two_way(self, data):
+        content = {
+            'command': 'delete_two_way',
+            'room_id': data['room_id']
+        }
+        await self.send({
+            'type' : 'websocket.send',
+            'text' :json.dumps(content)
+        })
+
+    async def delete_one_way(self, data):
+        content = {
+            'command': 'delete_one_way',
+            'room_id': data['room_id']
+        }
+        await self.send({
+            'type' : 'websocket.send',
+            'text' :json.dumps(content)
+        })
 
 
     @sync_to_async
@@ -584,8 +646,11 @@ class RoomConsumer2(AsyncConsumer):
     @database_sync_to_async
     def get_chat(self):
         try:
-            chat = Chat.objects.all()
-            return chat
+            lst = []
+            for i in Chat.objects.filter(hide=False):
+                if self.user not in i.hide_user.all():
+                    lst.append(i)
+            return lst
         except Chat.DoesNotExist:
             return None
 

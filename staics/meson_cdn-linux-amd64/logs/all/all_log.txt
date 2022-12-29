@@ -62,3 +62,30 @@
 [529.713ms] [rows:1] SELECT count(*) FROM `file` WHERE last_req_unixtime < 1671058957 AND status IN ("DOWNLOADED")
 2022-12-20 18:52:39 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
 [985.706ms] [rows:1] UPDATE `dbkv` SET `value`="jqnigyiymi,qnkowiavnq" WHERE `key`="access_key"
+2022-12-23 09:47:42 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[3931.673ms] [rows:1] UPDATE `dbkv` SET `value`="nlcspnysfz,zfyjxhtolq" WHERE `key`="access_key"
+2022-12-23 15:57:39 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[1465.921ms] [rows:1] UPDATE `dbkv` SET `value`="nzrcarqsne,dtbzylfxrp" WHERE `key`="access_key"
+2022-12-25 13:02:40 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[2204.601ms] [rows:1] UPDATE `dbkv` SET `value`="sevmrjsjfz,amkjzjzvvl" WHERE `key`="access_key"
+2022-12-27 06:44:39 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-27 06:45:39 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-27 06:46:09 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": dial tcp 52.53.44.43:443: i/o timeout (Client.Timeout exceeded while awaiting headers)
+2022-12-27 06:46:35 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": net/http: TLS handshake timeout
+2022-12-27 06:46:50 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": net/http: TLS handshake timeout
+2022-12-27 07:06:39 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-27 07:07:05 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": net/http: TLS handshake timeout
+2022-12-27 07:07:23 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": net/http: TLS handshake timeout
+2022-12-27 07:07:54 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": net/http: TLS handshake timeout
+2022-12-27 07:08:39 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-27 08:03:39 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-27 08:03:49 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": net/http: TLS handshake timeout
+2022-12-28 13:47:42 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-28 13:47:47 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": dial tcp: lookup cdn.meson.network: Try again
+2022-12-28 16:02:12 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-28 16:02:22 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": net/http: TLS handshake timeout
+2022-12-28 16:57:45 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[7518.299ms] [rows:1] UPDATE `dbkv` SET `value`="uoqroompss,gxlccophbd" WHERE `key`="access_key"
+2022-12-28 17:04:42 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-28 22:27:40 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[558.592ms] [rows:1] UPDATE `dbkv` SET `value`="xtdaouwule,eckgupwdyd" WHERE `key`="access_key"
