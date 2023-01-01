@@ -8,6 +8,8 @@ class ChatAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Message)
+admin.site.register(ContactOneToOne)
+admin.site.register(ChatOneToOne)
 admin.site.register(Contact)
 admin.site.register(Chat, ChatAdmin)
 admin.site.register(UserMessage)

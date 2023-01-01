@@ -31,9 +31,11 @@ class UserMessage(models.Model):
 
 class Message(models.Model):
     sender         = models.ForeignKey(CustomUser, related_name='messages_sender', on_delete=models.CASCADE)
-    recievers       = models.ManyToManyField(CustomUser, related_name='messages_recievers')
+    recievers      = models.ManyToManyField(CustomUser, related_name='messages_recievers')
     parent_message = models.ForeignKey('Message', related_name='child', null=True, on_delete=models.SET_NULL, blank=True)
     timestamp      = models.TimeField(auto_now_add=True)
+    edited         = models.BooleanField(default=False)
+
     # created_time   = models.DateTimeField(auto_now_add = True)
     date           = models.DateField(auto_now_add=True)
     content_type   = models.ForeignKey(ContentType,
@@ -94,10 +96,10 @@ class ContactOneToOne(models.Model):
     
 class ChatOneToOne(models.Model):
     unique_code  = models.CharField(max_length=35, default=UniqueGeneratorOneToOne)
-    participants = models.ForeignKey(ContactOneToOne, related_name='chats', blank=True, on_delete=models.CASCADE)
-    messages     = models.ManyToManyField(Message, blank=True)
+    participants = models.ForeignKey(ContactOneToOne, related_name='chatOneToOne', blank=True, on_delete=models.CASCADE)
+    messages     = models.ManyToManyField(Message, related_name='chatonemessages', blank=True)
     hide         = models.BooleanField(default=False)
-    hide_user    = models.ManyToManyField(CustomUser, related_name='room_hide')
+    hide_user    = models.ManyToManyField(CustomUser, related_name='chatOneToOne_hide')
 
     def last_10_messages():
         return Message.objects.all().order_by('-timestamp')[:10]

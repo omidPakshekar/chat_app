@@ -89,3 +89,10 @@
 2022-12-28 17:04:42 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
 2022-12-28 22:27:40 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
 [558.592ms] [rows:1] UPDATE `dbkv` SET `value`="xtdaouwule,eckgupwdyd" WHERE `key`="access_key"
+2022-12-29 15:27:40 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[1382.649ms] [rows:1] UPDATE `dbkv` SET `value`="kwjezoetwi,woldllugce" WHERE `key`="access_key"
+2022-12-29 16:48:14 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2022-12-31 00:58:16 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+2023-01-01 13:12:41 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
+[831.939ms] [rows:1] UPDATE `dbkv` SET `value`="xpqgcofxlu,tfnrrblusb" WHERE `key`="access_key"
+2023-01-01 14:19:51 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": EOF

@@ -65,6 +65,9 @@
         } else if (data['command'] === 'new_room'){
           createMessage2(data['room']);                                                 
         }
+        console.log("%%%%%%%%%%%%%%%%%%");
+        console.log(data['command']);
+        console.log("%%%%%%%%%%%%%%%%%%");
     };
 
     roomSocket.onclose = function(e) {
@@ -124,10 +127,10 @@
        //var chatSocket = new ReconnectingWebSocket(
        //'ws://' + window.location.host +
         //'/ws/chat/' + roomName + '/');
-        var chat_id ='rcdfvWFWxAYiFyPyrtgqmQUYgAxOVNKrzvz';
+        var chat_id ='JImpYXTpJwqrYFAxQtMcVDCbUcxdQS';
         var chatSocket = new WebSocket(
         'ws://' + window.location.host +
-        '/ws/chat2/' + chat_id + '/' +'test1/');
+        '/ws/chat2/' + chat_id + '/' +'omid/');
           
     chatSocket.onopen = function(e) {
       fetchMessages();
