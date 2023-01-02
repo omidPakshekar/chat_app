@@ -96,3 +96,4 @@
 2023-01-01 13:12:41 [WARN] /Users/bruce/workspace/go/project/peer-node/src/common/dbkv/tx.go:16 SLOW SQL >= 500ms
 [831.939ms] [rows:1] UPDATE `dbkv` SET `value`="xpqgcofxlu,tfnrrblusb" WHERE `key`="access_key"
 2023-01-01 14:19:51 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": EOF
+2023-01-02 11:09:24 [ERRO] SendHeartBeat err: Post "https://cdn.meson.network/api/node/heartbeat": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
