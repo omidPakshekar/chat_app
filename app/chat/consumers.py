@@ -14,6 +14,10 @@ from .models import *
 import base64
 from accounts.models import CustomUser
 
+from mongoengine import connect
+
+connect(db='test', host="my-mongodb", port=27017)
+
 
 User = get_user_model()
 
@@ -581,6 +585,7 @@ class RoomConsumer2(AsyncConsumer):
             'roomId': room.id,
             'roomName': roomName,
             'unique_code': room.unique_code,
+            'avatar' : "https://picsum.photos/200",
             'users': lst
         }
 

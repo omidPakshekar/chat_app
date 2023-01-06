@@ -17,6 +17,50 @@ services:
       - "5432"
     networks:
       - back
+  my-mongodb:
+    image: mongo:4.2.3-bionic
+    container_name: my-mongodb
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      # seeding scripts
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+      # named volumes
+      - mongodb:/data/db
+      - mongoconfig:/data/configdb
+    networks:
+      - back
+  # my-mongoclient:
+  #   # build will get tagged with 'image'
+  #   build: ./my-mongoclient
+  #   image: fabianlee/my-mongoclient:3.9
+  #   container_name: my-mongoclient
+  #   environment:
+  #     - MONGO_SERVER=my-mongodb
+  #     - MONGO_INITDB_DATABASE=test
+  #     - MONGO_INITDB_ROOT_USERNAME=admin
+  #     - MONGO_INITDB_ROOT_PASSWORD=admin
+  #   ports:
+  #     - 27018:27018
+  #   networks:
+  #     - back
+  #   depends_on:
+  #     - my-mongodb
+  mongoclient:
+      image: mongoclient/mongoclient:latest
+      container_name: mongoclient
+      hostname: mongoclient
+      depends_on:
+        - my-mongodb
+      networks:
+        - back
+      ports:
+        - 3300:3000
+
   # nginx:
   #   build: ./nginx
   #   image: "nginx:latest"
@@ -115,29 +159,31 @@ services:
       - redis
       - db
   
-  frontend:
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+  # frontend:
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true
 
-    build: 
-      context: ./CHAT
-    volumes:
-      - /CHAT/node_modules
-      - ./CHAT:/CHAT
-      - dist:/CHAT/dist
-    ports:
-      - "80:80"
-    expose:
-      - "80"
-    networks:
-      - back
-      - front
+  #   build: 
+  #     context: ./CHAT
+  #   volumes:
+  #     - /CHAT/node_modules
+  #     - ./CHAT:/CHAT
+  #     - dist:/CHAT/dist
+  #   ports:
+  #     - "80:80"
+  #   expose:
+  #     - "80"
+  #   networks:
+  #     - back
+  #     - front
 
 
 volumes:
   static:
   react_build:
   dist:
+  mongodb:
+  mongoconfig:
 
 networks:
   front:
